@@ -312,14 +312,17 @@
       padding-right: 0;
       /* internal content area with zero side margins */
       box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* Inner content wrapper to ensure text lines obey side margins zero but also natural padding */
+    /* Inner content wrapper to ensure text lines obey side margins zero */
     .page-content {
       position: relative;
       width: 100%;
       padding-left: 0;
       padding-right: 0;
+      flex: 1;
     }
 
     /* ensure lines and name alignment unchanged */
@@ -528,7 +531,7 @@
       }
     }
 
-    /* PRINT styles: enforce top margin 1in, bottom 0.5in, side margins 0, lines thicker */
+    /* PRINT styles */
     @media print {
       body {
         background: white;
@@ -540,7 +543,6 @@
         display: none !important;
       }
 
-      /* Reset any extra spacing */
       #preview, .page-container, .generator-container, .container {
         margin: 0 !important;
         padding: 0 !important;
@@ -555,7 +557,6 @@
         box-shadow: none;
         page-break-after: avoid;
         border: none;
-        /* enforce exact requested margins: top 1 inch, bottom half inch, both sides 0 margin */
         margin: 0 !important;
         padding-top: 1in !important;
         padding-bottom: 0.5in !important;
@@ -570,13 +571,11 @@
         padding: 0;
       }
       
-      /* Ensure name and line arrangement alignment stays identical to screen */
       .trace-line-row {
         margin-bottom: 20px;
         page-break-inside: avoid;
       }
       
-      /* Thicker blue/red/blue lines as requested - increase border width */
       .top-blue-line, .middle-red-line, .bottom-blue-line {
         border-width: 2.5px !important;
       }
@@ -589,29 +588,32 @@
         border-bottom: 2.5px solid rgba(74, 111, 165, 0.8) !important;
       }
       
-      /* Ensure cherry footer prints as well but small */
       .cherry-bottom-templates {
         display: block !important;
         opacity: 0.8;
+        margin-top: 2px !important;
+        padding-top: 0 !important;
       }
     }
 
-    /* Bottom credit styling: FB logo in blue circle + black text proper case */
+    /* Bottom credit styling - REDUCED padding above, dikit sa last blue line */
     .cherry-bottom-templates {
       text-align: center;
       font-size: 10px;
-      margin-top: 12px;
+      margin-top: 2px;        /* Reduced from 12px to be very close to last blue line */
+      margin-bottom: 0;
       letter-spacing: 0.3px;
       font-weight: 400;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       opacity: 0.8;
       transition: opacity 0.2s;
       position: relative;
-      bottom: -6px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
+      padding-top: 0;
+      line-height: 1.2;
     }
     
     /* Facebook blue round background */
@@ -724,7 +726,7 @@
         <div class="page-container">
           <div class="page" id="page">
             <div class="page-content" id="pageContent"></div>
-            <!-- bottom credit: FB logo in blue circle + "Free Templates by Cherry" in black, proper case -->
+            <!-- bottom credit with REDUCED padding above - dikit sa last blue line -->
             <div class="cherry-bottom-templates">
               <span class="fb-round-icon"><i class="fab fa-facebook-f"></i></span>
               <span class="cherry-text">Free Templates by Cherry</span>
@@ -762,7 +764,6 @@
       const generatePrintBtn = document.getElementById('generatePrintBtn');
       const pageContentDiv = document.getElementById('pageContent');
 
-      // Helper to create line elements (thicker blue/red/blue)
       function createLineElement(colorClass, lineTopPosition, lineHeightPx, isDashed = false) {
         const lineDiv = document.createElement('div');
         lineDiv.style.position = 'absolute';
@@ -770,14 +771,12 @@
         lineDiv.style.right = '0';
         lineDiv.style.height = '0px';
         lineDiv.style.top = `${lineTopPosition}px`;
-        // thicker base: 2px for normal screen to satisfy "little bit thicker" while not breaking alignment
         const borderWidth = '2px';
         if (isDashed) {
           lineDiv.style.borderBottom = `${borderWidth} dashed ${colorClass}`;
         } else {
           lineDiv.style.borderBottom = `${borderWidth} solid ${colorClass}`;
         }
-        // add additional class for print override
         if (colorClass === 'rgba(74, 111, 165, 0.8)' || colorClass === '#4A6FA5') {
           lineDiv.classList.add('top-blue-line');
         } else if (colorClass === 'rgba(255, 107, 107, 0.9)' || colorClass === '#FF6B6B') {
@@ -803,11 +802,9 @@
           rowContainer.style.height = `${lineHeight}px`;
           rowContainer.style.marginBottom = '20px';
           
-          // define line colors: blue top, red dashed middle, blue bottom
           const blueColor = 'rgba(74, 111, 165, 0.8)';
           const redColor = 'rgba(255, 107, 107, 0.9)';
           
-          // line positions
           const topPos = 3;
           const midPos = lineHeight / 2;
           const bottomPos = lineHeight - 3;
@@ -819,7 +816,6 @@
           const bottomLine = createLineElement(blueColor, bottomPos, lineHeight, false);
           bottomLine.classList.add('bottom-blue-line');
           
-          // trace text element - using local KG Primary Dots font
           const traceText = document.createElement('div');
           traceText.className = 'trace-text-name';
           traceText.style.position = 'absolute';
@@ -827,7 +823,6 @@
           traceText.style.left = '0';
           traceText.style.right = '0';
           traceText.style.height = `${lineHeight}px`;
-          // Apply the local KGPrimaryDots font (loaded from same folder)
           traceText.style.fontFamily = `'KGPrimaryDots', 'Comic Sans MS', 'Segoe UI Emoji', cursive`;
           traceText.style.fontSize = `${lineHeight * 1.45}px`;
           traceText.style.lineHeight = `${lineHeight * 1.05}px`;
@@ -863,7 +858,6 @@
         window.print();
       });
       
-      // smooth scroll for anchor links
       document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
           e.preventDefault();
