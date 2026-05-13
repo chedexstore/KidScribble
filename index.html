@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KidScribble - Name Tracing Practice Sheet Generator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    /* Use local KG Primary Dots font from same folder */
+    @font-face {
+      font-family: 'KGPrimaryDots';
+      src: url('KgPrimaryDots-Pl0E.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    
+    :root {
+      --primary-color: #4A6FA5;
+      --accent-color: #FF6B6B;
+      --text-color: #333333;
+      --light-bg: #F7F9FC;
+      --border-color: #E1E5EB;
+      --shadow: 0 4px 12px rgba(0,0,0,0.05);
+      --button-hover: #3d5d8a;
+      --secondary-text: #6c757d;
+      --footer-bg: #2d3748;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--light-bg);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    /* Header Styles */
+    header {
+      background: white;
+      padding: 16px 0;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-color);
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #4A6FA5 0%, #6B8EC7 100%);
+      color: white;
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    .hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto 30px;
+      opacity: 0.9;
+    }
+
+    .hero-button {
+      background: white;
+      color: var(--primary-color);
+      padding: 14px 28px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+
+    .hero-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .feature {
+      background: white;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .feature-icon {
+      font-size: 36px;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+
+    .feature h3 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    .feature p {
+      color: var(--secondary-text);
+    }
+
+    .generator-container {
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      margin: 0 auto 60px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 30px;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .control-group {
+      flex: 1;
+      min-width: 150px;
+      max-width: 200px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--text-color);
+      margin-bottom: 8px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    .slider-group {
+      flex: 1;
+      min-width: 150px;
+      max-width: 200px;
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slider-container input[type="range"] {
+      flex: 1;
+    }
+
+    .slider-value {
+      font-size: 14px;
+      min-width: 50px;
+      text-align: right;
+      color: var(--text-color);
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    button {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      max-width: 300px;
+    }
+
+    button:hover {
+      background: var(--button-hover);
+    }
+
+    .preview-header {
+      font-weight: 600;
+      margin: 30px 0 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: center;
+    }
+
+    #preview {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+      padding: 20px 0;
+      background: #f5f5f7;
+      border-radius: 8px;
+    }
+
+    .page-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100px;
+      width: 100%;
+    }
+
+    /* PAGE styling with EXACT margins: top 1 inch, bottom 0.5 inch, left/right 0 margin */
+    .page {
+      background: white;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      page-break-after: always;
+      border: 1px solid var(--border-color);
+      width: 210mm;
+      min-height: 148mm;
+      transform-origin: center top;
+      /* Critical margins: top 1 inch, bottom 0.5 inch, left/right 0 margin */
+      padding-top: 1in;
+      padding-bottom: 0.5in;
+      padding-left: 0;
+      padding-right: 0;
+      /* internal content area with zero side margins */
+      box-sizing: border-box;
+    }
+
+    /* Inner content wrapper to ensure text lines obey side margins zero but also natural padding */
+    .page-content {
+      position: relative;
+      width: 100%;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    /* ensure lines and name alignment unchanged */
+    .trace-line-row {
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+      page-break-inside: avoid;
+    }
+
+    .trace-text-name {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      font-family: 'KGPrimaryDots', 'Comic Sans MS', 'Segoe UI Emoji', cursive;
+      color: #333333;
+      text-align: left;
+      pointer-events: none;
+      white-space: nowrap;
+      overflow-x: visible;
+    }
+
+    /* Fix for responsive scaling */
+    @media (max-width: 1200px) {
+      .page {
+        transform: scale(0.9);
+      }
+    }
+
+    @media (max-width: 992px) {
+      .page {
+        transform: scale(0.8);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .page {
+        transform: scale(0.7);
+        width: 100%;
+        height: auto;
+        aspect-ratio: 210 / 148;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .page {
+        transform: scale(0.6);
+      }
+    }
+
+    /* Testimonials */
+    .testimonials {
+      background: white;
+      padding: 60px 0;
+    }
+
+    .testimonial-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .testimonial {
+      background: var(--light-bg);
+      border-radius: 8px;
+      padding: 30px;
+      text-align: left;
+    }
+
+    .testimonial-text {
+      font-style: italic;
+      margin-bottom: 20px;
+      color: var(--text-color);
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+    }
+
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 15px;
+    }
+
+    .author-info h4 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .author-info p {
+      margin: 0;
+      color: var(--secondary-text);
+      font-size: 14px;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--footer-bg);
+      color: white;
+      padding: 60px 0 30px;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+    }
+
+    .footer-column h3 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 40px auto 0;
+      padding: 20px 20px 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 15px;
+    }
+
+    .social-links a {
+      color: rgba(255,255,255,0.8);
+      font-size: 20px;
+      transition: color 0.2s;
+    }
+
+    .social-links a:hover {
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .control-group, .slider-group {
+        max-width: none;
+      }
+      
+      .hero h1 {
+        font-size: 36px;
+      }
+      
+      .hero p {
+        font-size: 18px;
+      }
+      
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .social-links {
+        justify-content: center;
+      }
+    }
+
+    /* PRINT styles: enforce top margin 1in, bottom 0.5in, side margins 0, lines thicker */
+    @media print {
+      body {
+        background: white;
+        margin: 0;
+        padding: 0;
+      }
+
+      header, .hero, .features, .testimonials, footer, .controls, button, .preview-header, h2, .section-title, .button-container {
+        display: none !important;
+      }
+
+      /* Reset any extra spacing */
+      #preview, .page-container, .generator-container, .container {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        box-shadow: none !important;
+      }
+
+      .page {
+        transform: scale(1) !important;
+        width: 100%;
+        height: auto;
+        box-shadow: none;
+        page-break-after: avoid;
+        border: none;
+        /* enforce exact requested margins: top 1 inch, bottom half inch, both sides 0 margin */
+        margin: 0 !important;
+        padding-top: 1in !important;
+        padding-bottom: 0.5in !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        box-sizing: border-box;
+      }
+      
+      .page-content {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      
+      /* Ensure name and line arrangement alignment stays identical to screen */
+      .trace-line-row {
+        margin-bottom: 20px;
+        page-break-inside: avoid;
+      }
+      
+      /* Thicker blue/red/blue lines as requested - increase border width */
+      .top-blue-line, .middle-red-line, .bottom-blue-line {
+        border-width: 2.5px !important;
+      }
+      
+      .middle-red-line {
+        border-bottom: 2.5px dashed rgba(255, 107, 107, 0.9) !important;
+      }
+      
+      .top-blue-line, .bottom-blue-line {
+        border-bottom: 2.5px solid rgba(74, 111, 165, 0.8) !important;
+      }
+      
+      /* Ensure cherry footer prints as well but small */
+      .cherry-bottom-templates {
+        display: block !important;
+        opacity: 0.8;
+      }
+    }
+
+    /* Bottom credit styling: FB logo in blue circle + black text proper case */
+    .cherry-bottom-templates {
+      text-align: center;
+      font-size: 10px;
+      margin-top: 12px;
+      letter-spacing: 0.3px;
+      font-weight: 400;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+      position: relative;
+      bottom: -6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    /* Facebook blue round background */
+    .fb-round-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #1877f2;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      color: white;
+      font-size: 10px;
+      margin-right: 0;
+      flex-shrink: 0;
+    }
+    
+    .fb-round-icon i {
+      font-size: 10px;
+      margin: 0;
+    }
+    
+    .cherry-text {
+      color: #000000;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      font-size: 10px;
+    }
+    
+    .cherry-bottom-templates:hover {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <i class="fas fa-pencil-alt"></i>
+        <span>KidScribble</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#">Home</a>
+        <a href="#">Features</a>
+        <a href="#">Worksheets</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-container">
+      <h1>Help Your Child Master Handwriting</h1>
+      <p>Create personalized name tracing practice sheets in seconds. Perfect for preschool and kindergarten learning.</p>
+      <a href="#generator" class="hero-button">Create Your Worksheet</a>
+    </div>
+  </section>
+
+  <div class="container">
+    <section class="features">
+      <div class="feature">
+        <div class="feature-icon"><i class="fas fa-pencil-ruler"></i></div>
+        <h3>Personalized Practice</h3>
+        <p>Create custom worksheets with your child's name for meaningful practice.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon"><i class="fas fa-sliders-h"></i></div>
+        <h3>Fully Customizable</h3>
+        <p>Adjust line height and spacing to match your child's writing level.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon"><i class="fas fa-print"></i></div>
+        <h3>Print Ready</h3>
+        <p>Generate and print professional quality worksheets instantly.</p>
+      </div>
+    </section>
+
+    <section class="generator-container" id="generator">
+      <h2 class="section-title">Create Your Name Tracing Worksheet</h2>
+      <div class="controls">
+        <div class="control-group">
+          <label for="nameInput">Child's Name</label>
+          <input type="text" id="nameInput" value="Sean" placeholder="Enter a name"/>
+        </div>
+        <div class="control-group">
+          <label for="repetitions">Number of Repetitions</label>
+          <input type="number" id="repetitions" min="1" max="10" value="6"/>
+        </div>
+        <div class="slider-group">
+          <label for="lineHeight">Line Height</label>
+          <div class="slider-container">
+            <input type="range" id="lineHeight" min="25" max="100" value="55"/>
+            <span id="lineHeightDisplay" class="slider-value">55px</span>
+          </div>
+        </div>
+        <div class="slider-group">
+          <label for="letterSpacing">Letter Spacing</label>
+          <div class="slider-container">
+            <input type="range" id="letterSpacing" min="0" max="40" value="0"/>
+            <span id="letterSpacingDisplay" class="slider-value">0px</span>
+          </div>
+        </div>
+      </div>
+      <div class="button-container">
+        <button id="generatePrintBtn"><i class="fas fa-print"></i> Generate & Print Worksheet</button>
+      </div>
+      <div class="preview-header">Preview</div>
+      <div id="preview">
+        <div class="page-container">
+          <div class="page" id="page">
+            <div class="page-content" id="pageContent"></div>
+            <!-- bottom credit: FB logo in blue circle + "Free Templates by Cherry" in black, proper case -->
+            <div class="cherry-bottom-templates">
+              <span class="fb-round-icon"><i class="fab fa-facebook-f"></i></span>
+              <span class="cherry-text">Free Templates by Cherry</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="testimonials">
+    <div class="testimonial-container">
+      <h2 class="section-title">What Parents Are Saying</h2>
+      <div class="testimonial-grid">
+        <div class="testimonial"><p class="testimonial-text">"My daughter loves practicing her name with these worksheets. They've helped her handwriting improve so much in just a few weeks!"</p><div class="testimonial-author"><div class="author-avatar">JM</div><div class="author-info"><h4>Jessica Morgan</h4><p>Parent of a 5-year-old</p></div></div></div>
+        <div class="testimonial"><p class="testimonial-text">"As a kindergarten teacher, I use KidScribble to create custom practice sheets for my students. It's so easy to use and the kids love it!"</p><div class="testimonial-author"><div class="author-avatar">RB</div><div class="author-info"><h4>Robert Bennet</h4><p>Kindergarten Teacher</p></div></div></div>
+        <div class="testimonial"><p class="testimonial-text">"The ability to adjust line height and spacing has been perfect for my son who has fine motor skill challenges. Thank you for this amazing tool!"</p><div class="testimonial-author"><div class="author-avatar">AP</div><div class="author-info"><h4>Amanda Peters</h4><p>Special Needs Parent</p></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-container"><div class="footer-column"><h3>KidScribble</h3><p>Helping children develop handwriting skills through fun, personalized practice sheets.</p></div><div class="footer-column"><h3>Quick Links</h3><ul class="footer-links"><li><a href="#">Home</a></li><li><a href="#">Features</a></li><li><a href="#">Worksheets</a></li><li><a href="#">About Us</a></li><li><a href="#">Contact</a></li></ul></div><div class="footer-column"><h3>Resources</h3><ul class="footer-links"><li><a href="#">Handwriting Tips</a></li><li><a href="#">Teaching Resources</a></li><li><a href="#">Blog</a></li><li><a href="#">FAQ</a></li></ul></div><div class="footer-column"><h3>Contact Us</h3><ul class="footer-links"><li><a href="mailto:hello@kidscribble.com">hello@kidscribble.com</a></li><li><a href="tel:+1234567890">+1 (234) 567-890</a></li></ul></div></div>
+    <div class="footer-bottom"><p>&copy; 2025 KidScribble. All rights reserved.</p><div class="social-links"><a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-pinterest"></i></a></div></div>
+  </footer>
+
+  <script>
+    (function() {
+      const nameInput = document.getElementById('nameInput');
+      const repetitionsInput = document.getElementById('repetitions');
+      const lineHeightInput = document.getElementById('lineHeight');
+      const lineHeightDisplay = document.getElementById('lineHeightDisplay');
+      const letterSpacingInput = document.getElementById('letterSpacing');
+      const letterSpacingDisplay = document.getElementById('letterSpacingDisplay');
+      const generatePrintBtn = document.getElementById('generatePrintBtn');
+      const pageContentDiv = document.getElementById('pageContent');
+
+      // Helper to create line elements (thicker blue/red/blue)
+      function createLineElement(colorClass, lineTopPosition, lineHeightPx, isDashed = false) {
+        const lineDiv = document.createElement('div');
+        lineDiv.style.position = 'absolute';
+        lineDiv.style.left = '0';
+        lineDiv.style.right = '0';
+        lineDiv.style.height = '0px';
+        lineDiv.style.top = `${lineTopPosition}px`;
+        // thicker base: 2px for normal screen to satisfy "little bit thicker" while not breaking alignment
+        const borderWidth = '2px';
+        if (isDashed) {
+          lineDiv.style.borderBottom = `${borderWidth} dashed ${colorClass}`;
+        } else {
+          lineDiv.style.borderBottom = `${borderWidth} solid ${colorClass}`;
+        }
+        // add additional class for print override
+        if (colorClass === 'rgba(74, 111, 165, 0.8)' || colorClass === '#4A6FA5') {
+          lineDiv.classList.add('top-blue-line');
+        } else if (colorClass === 'rgba(255, 107, 107, 0.9)' || colorClass === '#FF6B6B') {
+          lineDiv.classList.add('middle-red-line');
+        } else if (colorClass === 'rgba(74, 111, 165, 0.7)' || colorClass === '#4A6FA5') {
+          lineDiv.classList.add('bottom-blue-line');
+        }
+        return lineDiv;
+      }
+
+      function generatePracticeSheet() {
+        const name = nameInput.value.trim() || 'Sample';
+        const repetitions = parseInt(repetitionsInput.value, 10) || 5;
+        const lineHeight = parseInt(lineHeightInput.value, 10) || 55;
+        const letterSpacing = parseInt(letterSpacingInput.value, 10) || 0;
+
+        pageContentDiv.innerHTML = '';
+
+        for (let i = 0; i < repetitions; i++) {
+          const rowContainer = document.createElement('div');
+          rowContainer.className = 'trace-line-row';
+          rowContainer.style.position = 'relative';
+          rowContainer.style.height = `${lineHeight}px`;
+          rowContainer.style.marginBottom = '20px';
+          
+          // define line colors: blue top, red dashed middle, blue bottom
+          const blueColor = 'rgba(74, 111, 165, 0.8)';
+          const redColor = 'rgba(255, 107, 107, 0.9)';
+          
+          // line positions
+          const topPos = 3;
+          const midPos = lineHeight / 2;
+          const bottomPos = lineHeight - 3;
+          
+          const topLine = createLineElement(blueColor, topPos, lineHeight, false);
+          topLine.classList.add('top-blue-line');
+          const middleLine = createLineElement(redColor, midPos, lineHeight, true);
+          middleLine.classList.add('middle-red-line');
+          const bottomLine = createLineElement(blueColor, bottomPos, lineHeight, false);
+          bottomLine.classList.add('bottom-blue-line');
+          
+          // trace text element - using local KG Primary Dots font
+          const traceText = document.createElement('div');
+          traceText.className = 'trace-text-name';
+          traceText.style.position = 'absolute';
+          traceText.style.top = '0';
+          traceText.style.left = '0';
+          traceText.style.right = '0';
+          traceText.style.height = `${lineHeight}px`;
+          // Apply the local KGPrimaryDots font (loaded from same folder)
+          traceText.style.fontFamily = `'KGPrimaryDots', 'Comic Sans MS', 'Segoe UI Emoji', cursive`;
+          traceText.style.fontSize = `${lineHeight * 1.45}px`;
+          traceText.style.lineHeight = `${lineHeight * 1.05}px`;
+          traceText.style.color = '#333333';
+          traceText.style.letterSpacing = `${letterSpacing}px`;
+          traceText.style.textAlign = 'left';
+          traceText.style.whiteSpace = 'nowrap';
+          traceText.style.overflow = 'visible';
+          
+          const textSpan = document.createElement('span');
+          textSpan.style.display = 'inline-block';
+          textSpan.style.position = 'relative';
+          textSpan.style.top = `${lineHeight * 0.08}px`;
+          textSpan.textContent = name;
+          traceText.appendChild(textSpan);
+          
+          rowContainer.appendChild(topLine);
+          rowContainer.appendChild(middleLine);
+          rowContainer.appendChild(bottomLine);
+          rowContainer.appendChild(traceText);
+          pageContentDiv.appendChild(rowContainer);
+        }
+        
+        lineHeightDisplay.textContent = `${lineHeight}px`;
+        letterSpacingDisplay.textContent = `${letterSpacing}px`;
+      }
+
+      nameInput.addEventListener('input', generatePracticeSheet);
+      repetitionsInput.addEventListener('input', generatePracticeSheet);
+      lineHeightInput.addEventListener('input', generatePracticeSheet);
+      letterSpacingInput.addEventListener('input', generatePracticeSheet);
+      generatePrintBtn.addEventListener('click', () => {
+        window.print();
+      });
+      
+      // smooth scroll for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) target.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+      
+      generatePracticeSheet();
+    })();
+  </script>
+</body>
+</html>
